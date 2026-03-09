@@ -13,11 +13,11 @@ export function AmountFilter({ value, onChange }: Props) {
         <Input
           id="amount-filter"
           type="number"
+          inputMode="decimal"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Amount"
-          min="0"
-          step="0.01"
+          aria-label="Filter by amount"
         />
       </div>
     </div>

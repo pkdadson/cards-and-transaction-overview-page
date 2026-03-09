@@ -30,6 +30,8 @@ vi.mock("./api/cardsApi", () => {
   };
 });
 
+const getCardButton = (name: string) => screen.getByRole("button", { name: new RegExp(name, "i") });
+
 test("renders the page headline", () => {
   render(<App />);
   expect(screen.getByText("Cards & Transactions")).toBeInTheDocument();
@@ -37,18 +39,19 @@ test("renders the page headline", () => {
 
 test("renders all cards", () => {
   render(<App />);
-  expect(screen.getByText("Private Card")).toBeInTheDocument();
-  expect(screen.getByText("Business Card")).toBeInTheDocument();
+  expect(getCardButton("Private Card")).toBeInTheDocument();
+  expect(getCardButton("Business Card")).toBeInTheDocument();
 });
 
-test("shows a hint when no card is selected", () => {
+test("auto-selects the first card on load", () => {
   render(<App />);
-  expect(screen.getByText(/select a card/i)).toBeInTheDocument();
+  expect(getCardButton("Private Card")).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByText("Food")).toBeInTheDocument();
 });
 
 test("shows transactions when a card is selected", () => {
   render(<App />);
-  fireEvent.click(screen.getByText("Private Card"));
+  fireEvent.click(getCardButton("Private Card"));
   expect(screen.getByText("Food")).toBeInTheDocument();
   expect(screen.getByText("Snack")).toBeInTheDocument();
   expect(screen.getByText("Tickets")).toBeInTheDocument();
@@ -56,42 +59,39 @@ test("shows transactions when a card is selected", () => {
 
 test("filters transactions by minimum amount", () => {
   render(<App />);
-  fireEvent.click(screen.getByText("Private Card"));
+  fireEvent.click(getCardButton("Private Card"));
 
-  fireEvent.change(screen.getByLabelText(/show transactions/i), {
+  fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "100" },
   });
 
-  expect(screen.getByText("Food")).toBeInTheDocument();      // 123.88 — visible
-  expect(screen.getByText("Tickets")).toBeInTheDocument();   // 288.38 — visible
-  expect(screen.queryByText("Snack")).not.toBeInTheDocument(); // 33.48 — hidden
+  expect(screen.getByText("Food")).toBeInTheDocument();
+  expect(screen.getByText("Tickets")).toBeInTheDocument();
+  expect(screen.queryByText("Snack")).not.toBeInTheDocument();
 });
 
 test("resets filter when switching to another card", () => {
   render(<App />);
 
-  fireEvent.click(screen.getByText("Private Card"));
-  fireEvent.change(screen.getByLabelText(/show transactions/i), {
+  fireEvent.click(getCardButton("Private Card"));
+  fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "100" },
   });
   expect(screen.queryByText("Snack")).not.toBeInTheDocument();
 
-  // Switching card should clear the filter
-  fireEvent.click(screen.getByText("Business Card"));
-  fireEvent.click(screen.getByText("Private Card"));
+  fireEvent.click(getCardButton("Business Card"));
+  fireEvent.click(getCardButton("Private Card"));
 
   expect(screen.getByText("Snack")).toBeInTheDocument(); // filter was reset
 });
 
 test("negative amounts (refunds) are visible by default and hidden when filtered out", () => {
   render(<App />);
-  fireEvent.click(screen.getByText("Business Card"));
+  fireEvent.click(getCardButton("Business Card"));
 
-  // Refund is visible with no filter
   expect(screen.getByText("Refund for Smart Phone")).toBeInTheDocument();
 
-  // Entering 0 as the minimum hides negative transactions
-  fireEvent.change(screen.getByLabelText(/show transactions/i), {
+  fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "0" },
   });
   expect(screen.queryByText("Refund for Smart Phone")).not.toBeInTheDocument();

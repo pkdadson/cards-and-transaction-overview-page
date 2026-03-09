@@ -11,33 +11,38 @@ export function CardList({ cards, selectedCardId, onSelect }: Props) {
   return (
     <List>
       {cards.map((card) => (
-        <CardItem
-          key={card.id}
-          $color={card.color}
-          $selected={card.id === selectedCardId}
-          onClick={() => onSelect(card.id)}
-          onKeyDown={(e) => e.key === 'Enter' && onSelect(card.id)}
-          role="button"
-          aria-pressed={card.id === selectedCardId}
-          tabIndex={0}
-        >
-          <CardName>{card.description}</CardName>
-          <CardId>{card.id}</CardId>
-        </CardItem>
+        <li key={card.id}>
+          <CardItem
+            $color={card.color}
+            $selected={card.id === selectedCardId}
+            onClick={() => onSelect(card.id)}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(card.id)}
+            role="button"
+            aria-pressed={card.id === selectedCardId}
+            tabIndex={0}
+          >
+            <CardName>{card.description}</CardName>
+            <CardId>{card.id}</CardId>
+          </CardItem>
+        </li>
       ))}
     </List>
   );
 }
 
-const List = styled.div`
+const List = styled.ul`
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
-  `;
-  
-  const CardItem = styled.div<{ $color: string; $selected: boolean }>`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const CardItem = styled.div<{ $color: string; $selected: boolean }>`
   flex: 1;
   height: 160px;
+  width: 240px;
   padding: 24px 36px;
   border-radius: 16px;
   background: ${({ $color }) => $color};
@@ -46,11 +51,11 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  opacity: ${({ $selected }) => ($selected ? 1 : 0.55)};
+  opacity: ${({ $selected }) => ($selected ? 1 : 0.75)};
   outline: none;
 
   &:focus-visible {
-    outline: 2px solid ${({ $color }) => $color};
+    outline: 3px solid white;
     outline-offset: 3px;
   }
 `;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { CardList } from './components/CardList';
 import { AmountFilter } from './components/AmountFilter';
@@ -13,6 +13,12 @@ function App() {
   const { data: transactions = [], isFetching: transactionsFetching } =
     useGetTransactionsQuery(selectedCardId ?? '', { skip: selectedCardId === null });
 
+  useEffect(() => {
+    if (cards.length > 0 && selectedCardId === null) {
+      setSelectedCardId(cards[0].id);
+    }
+  }, [cards, selectedCardId]);
+
   const selectedCard = cards.find((c) => c.id === selectedCardId) ?? null;
 
   function handleCardSelect(cardId: string) {
@@ -26,7 +32,7 @@ function App() {
 
       <Section>
         {cardsLoading ? (
-          <p>Loading cards…</p>
+          <p aria-live="polite">Loading cards…</p>
         ) : (
           <CardList cards={cards} selectedCardId={selectedCardId} onSelect={handleCardSelect} />
         )}
@@ -38,7 +44,7 @@ function App() {
             <AmountFilter value={filterAmount} onChange={setFilterAmount} />
           </Section>
 
-          <Section>
+          <Section aria-live="polite" aria-label={`Transactions for ${selectedCard.description}`}>
             <SectionHeading $color={selectedCard.color}>
               {selectedCard.description}
             </SectionHeading>
@@ -64,7 +70,6 @@ function App() {
 
 const Page = styled.div`
   max-width: 680px;
-  height: 100vh;
   margin: 0 auto;
   padding: 40px 24px;
   font-family: sans-serif;
