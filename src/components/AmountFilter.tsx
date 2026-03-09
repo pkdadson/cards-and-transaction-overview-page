@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { Input } from './ui/Input';
 
 interface Props {
   value: string;
@@ -7,38 +7,16 @@ interface Props {
 
 export function AmountFilter({ value, onChange }: Props) {
   return (
-    <div>
-      <Label htmlFor="amount-filter">Amount Filter</Label>
-      <div>
-        <Input
-          id="amount-filter"
-          type="number"
-          inputMode="decimal"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Amount"
-          aria-label="Filter by amount"
-        />
-      </div>
-    </div>
+    <Input
+      id="amount-filter"
+      label="Amount Filter"
+      value={value}
+      onChange={onChange}
+      placeholder="Amount"
+      type="number"
+      inputMode="decimal"
+      min="0"
+      step="0.01"
+    />
   );
 }
-
-const Label = styled.label`
-  font-size: 14px;
-  font-weight: 600;
-  color: #000;
-  padding: 10px;
-`;
-
-const Input = styled.input`
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 680px;
-  height: 40px;
-  padding: 6px 24px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-`;
