@@ -1,89 +1,38 @@
-# Cards & Transactions Overview – Frontend Exercise
+# Cards & Transactions
 
-This exercise is a small frontend application that simulates a banking-style overview page.
-
-The goal is to build a page where a user can view payment cards, select one of them, and inspect its transactions. The user must also be able to filter the transactions by amount.
-
-A rough interface sketch is included in the repository to illustrate the intended layout and interaction. The design is only guidance — a pixel-perfect implementation is **not required**.
-
-**Expected time investment:** ~4 hours
-
-![image](docs/cardTransactionDesigns.png)
-
-
-## Functional Requirements
-
-### Card Selection
-
-* Display a list of payment cards
-* The user can select one of the cards
-* The selected card becomes the active context of the page
-
-### Transactions
-
-* When a card is selected, show the transactions belonging to that card
-* The transactions should visually relate to the selected card (for example: matching background color or another clear visual connection)
-
-### Filtering
-
-* A numeric filter field must exist between the cards and the transactions list
-* The user can enter an amount
-* Only transactions with an amount **greater than or equal to** the entered value remain visible
-* When the user switches to another card, the filter input resets
-
-## Technical Setup
-
-Use the framework relevant to the role you applied for (e.g. React, Vue, etc.).
-
-You may:
-
-* use the included starter project, or
-* create your own setup from scratch
-
-You are free to add any libraries you consider appropriate (state management, routing, testing tools, UI helpers, etc.).
-
-If you use the starter project:
+## How to run
 
 ```bash
-yarn
+yarn        # install dependencies
+yarn dev    # http://localhost:5173
+yarn test   # run tests
 ```
 
-## Data Source
+## What I built
 
-The repository contains example data inside `src/data` as JSON files.
+A banking overview page where users can browse payment cards, select one, and inspect its transactions. Core features:
 
-You may use this data as the backing data for the application.
-However, the application should be implemented as if the data were loaded from an external API rather than directly from static imports.
+- **Card selection** — cards are displayed on load with the first one pre-selected
+- **Transaction history** — selecting a card shows its transactions, visually tied to the card via a matching colour accent
+- **Amount filter** — filters transactions to amounts greater than or equal to the entered value; resets automatically when switching cards
 
-In other words, structure your solution so that replacing the local data with real network requests would not require major changes to the application architecture.
+## Technical decisions
 
-## General Expectations
+**RTK Query for data fetching** — the challenge asked to structure the app as if data came from an external API. RTK Query's `fakeBaseQuery` fits this well: each endpoint has a `queryFn` that resolves local JSON with a small simulated delay. Swapping it for a real `fetch` call is a one-line change per endpoint. It also handles loading and caching for free.
 
-We are interested in how you approach implementing a feature in a small application.
+**Styled Components** — kept styling co-located with each component. No theme provider since there's nothing shared enough to warrant it.
 
-If you complete the core requirements early, you are welcome to extend the solution further or refine parts of the implementation. Additional improvements are optional and should not be necessary to submit a valid solution.
+**Filter state lives in App** — simple `useState`, reset explicitly inside `handleCardSelect` when switching cards. An effect would have worked too but this is more direct.
 
-### Junior
+## Tradeoffs
 
-A working implementation that follows the described behavior and is reasonably understandable.
+- Card colors are hardcoded by ID in the API layer. In a real app they'd come from the API response.
+- No URL routing, so selecting a card doesn't update the URL. You can't deep-link to a specific card or use the back button.
+- The filter applies on every keystroke. Fine for a small list — worth debouncing at scale.
 
-### Mid-Level
+## What I'd improve with more time
 
-A well-structured and maintainable solution with clear organization and thoughtful implementation choices.
-
-### Senior
-
-A solution that reflects engineering maturity and consideration for long-term maintainability and scalability.
-
-## What to Include in Your Submission
-
-Please provide:
-
-* the full source code
-* a short `README` explaining:
-
-  * how to run the project
-  * assumptions or tradeoffs you made
-  * what you would improve with more time
-
-The goal of this exercise is to understand your technical decisions and development approach when implementing a real feature.
+- Per-card URLs with React Router
+- More thorough error handling (what happens if the API is down)
+- Storybook stories for the components in isolation
+- E2E tests with Playwright covering the full select → filter → switch flow
