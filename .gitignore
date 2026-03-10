@@ -26,6 +26,11 @@ dist-ssr
 # Environment variables
 .env
 
+# Playwright
+test-results/
+playwright-report/
+.playwright-browsers/
+
 yarn.lock
 package-lock.json
 pnpm-lock.yaml
