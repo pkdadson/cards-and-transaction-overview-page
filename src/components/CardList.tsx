@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { PaymentCard } from './ui/PaymentCard';
-import type { Card } from '../types';
+import { PaymentCard } from '@/components/ui/PaymentCard';
+import type { Card } from '@/types';
 
 interface Props {
   cards: Card[];

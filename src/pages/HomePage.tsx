@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { CardList } from '../components/CardList';
-import { AmountFilter } from '../components/AmountFilter';
-import { TransactionList } from '../components/TransactionList';
-import { CardListSkeleton, TransactionListSkeleton } from '../components/ui/Skeleton';
-import { useGetCardsQuery, useGetTransactionsQuery } from '../api/cardsApi';
+import { CardList } from '@/components/CardList';
+import { AmountFilter } from '@/components/AmountFilter';
+import { TransactionList } from '@/components/TransactionList';
+import { CardListSkeleton, TransactionListSkeleton } from '@/components/ui/Skeleton';
+import { useGetCardsQuery, useGetTransactionsQuery } from '@/api/cardsApi';
 
 export function HomePage() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { TransactionItem } from './ui/TransactionItem';
-import type { Transaction } from '../types';
+import { TransactionItem } from '@/components/ui/TransactionItem';
+import type { Transaction } from '@/types';
 
 interface Props {
   transactions: Transaction[];

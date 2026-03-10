@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { cardsApi } from '../api/cardsApi';
+import { cardsApi } from '@/api/cardsApi';
 
 export function makeStore() {
   return configureStore({

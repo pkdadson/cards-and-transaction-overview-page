@@ -1,7 +1,7 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import cardsRaw from '../data/cards.json';
-import transactionsRaw from '../data/transactions.json';
-import type { Card, Transaction } from '../types';
+import cardsRaw from '@/data/cards.json';
+import transactionsRaw from '@/data/transactions.json';
+import type { Card, Transaction } from '@/types';
 
 const CARD_COLORS: Record<string, string> = {
   'lkmfkl-mlfkm-dlkfm': '#2c3e50',

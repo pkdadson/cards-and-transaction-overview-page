@@ -1,11 +1,11 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { vi, afterEach } from "vitest";
-import App from "./App";
+import App from "@/App";
 
 const txError = vi.hoisted(() => ({ value: false }));
 const refetch = vi.hoisted(() => vi.fn());
 
-vi.mock("./api/cardsApi", () => {
+vi.mock("@/api/cardsApi", () => {
   const cards = [
     { id: "card-1", description: "Private Card", color: "#2c3e50" },
     { id: "card-2", description: "Business Card", color: "#1e6f5c" },

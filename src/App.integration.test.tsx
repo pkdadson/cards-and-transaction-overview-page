@@ -1,8 +1,8 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { Provider } from 'react-redux';
-import App from './App';
-import { makeStore } from './store';
+import App from '@/App';
+import { makeStore } from '@/store';
 
 function renderWithStore() {
   render(
