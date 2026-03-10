@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AmountFilter } from '@/components/AmountFilter';
@@ -9,6 +9,10 @@ import { useGetCardsQuery, useGetTransactionsQuery } from '@/api/cardsApi';
 export function TransactionPanel() {
   const { cardId } = useParams<{ cardId: string }>();
   const [filterAmount, setFilterAmount] = useState('');
+
+  useEffect(() => {
+    setFilterAmount('');
+  }, [cardId]);
 
   const { data: cards = [] } = useGetCardsQuery();
   const {

@@ -1,9 +1,28 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
-import { vi, afterEach } from "vitest";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
+import { vi, beforeEach, afterEach } from "vitest";
 import App from "@/App";
 
 const txError = vi.hoisted(() => ({ value: false }));
 const refetch = vi.hoisted(() => vi.fn());
+
+vi.mock("@tanstack/react-virtual", () => ({
+  useVirtualizer: ({ count, estimateSize }: { count: number; estimateSize: () => number }) => ({
+    getTotalSize: () => count * estimateSize(),
+    getVirtualItems: () =>
+      Array.from({ length: count }, (_, i) => ({
+        index: i,
+        start: i * estimateSize(),
+        size: estimateSize(),
+        key: String(i),
+        lane: 0,
+      })),
+  }),
+}));
+
+vi.mock("react-router-dom", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("react-router-dom")>();
+  return { ...mod, BrowserRouter: mod.MemoryRouter };
+});
 
 vi.mock("@/api/cardsApi", () => {
   const cards = [
@@ -35,8 +54,13 @@ vi.mock("@/api/cardsApi", () => {
   };
 });
 
+beforeEach(() => {
+  sessionStorage.setItem('auth_user', JSON.stringify({ email: 'test@example.com' }));
+});
+
 afterEach(() => {
   txError.value = false;
+  sessionStorage.clear();
 });
 
 const getCardButton = (name: string) => screen.getByRole("button", { name: new RegExp(name, "i") });
@@ -54,14 +78,14 @@ test("renders all cards", async () => {
 
 test("auto-selects the first card on load", async () => {
   await act(async () => render(<App />));
+  await waitFor(() => expect(screen.getByText("Food")).toBeInTheDocument());
   expect(getCardButton("Private Card")).toHaveAttribute("aria-pressed", "true");
-  expect(screen.getByText("Food")).toBeInTheDocument();
 });
 
 test("shows transactions when a card is selected", async () => {
   await act(async () => render(<App />));
   await act(async () => fireEvent.click(getCardButton("Private Card")));
-  expect(screen.getByText("Food")).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText("Food")).toBeInTheDocument());
   expect(screen.getByText("Snack")).toBeInTheDocument();
   expect(screen.getByText("Tickets")).toBeInTheDocument();
 });
@@ -69,6 +93,7 @@ test("shows transactions when a card is selected", async () => {
 test("filters transactions by minimum amount", async () => {
   await act(async () => render(<App />));
   await act(async () => fireEvent.click(getCardButton("Private Card")));
+  await waitFor(() => expect(screen.getByLabelText(/amount filter/i)).toBeInTheDocument());
 
   fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "100" },
@@ -81,8 +106,8 @@ test("filters transactions by minimum amount", async () => {
 
 test("resets filter when switching to another card", async () => {
   await act(async () => render(<App />));
+  await waitFor(() => expect(screen.getByLabelText(/amount filter/i)).toBeInTheDocument());
 
-  await act(async () => fireEvent.click(getCardButton("Private Card")));
   fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "100" },
   });
@@ -91,7 +116,7 @@ test("resets filter when switching to another card", async () => {
   await act(async () => fireEvent.click(getCardButton("Business Card")));
   await act(async () => fireEvent.click(getCardButton("Private Card")));
 
-  expect(screen.getByText("Snack")).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText("Snack")).toBeInTheDocument());
 });
 
 test("shows error UI when query fails; retry button calls refetch", async () => {
@@ -108,8 +133,7 @@ test("shows error UI when query fails; retry button calls refetch", async () => 
 test("negative amounts (refunds) are visible by default and hidden when filtered out", async () => {
   await act(async () => render(<App />));
   await act(async () => fireEvent.click(getCardButton("Business Card")));
-
-  expect(screen.getByText("Refund for Smart Phone")).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText("Refund for Smart Phone")).toBeInTheDocument());
 
   fireEvent.change(screen.getByLabelText(/amount filter/i), {
     target: { value: "0" },
