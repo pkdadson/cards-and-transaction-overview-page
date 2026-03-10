@@ -354,37 +354,3 @@ Owns card selection. The `useEffect` auto-redirects to the first card when cards
 
 ### `src/components/TransactionList.tsx`
 Fixed-height virtualised list. The scroll container is `480px`. If you change `TransactionItem`'s height, update `ITEM_HEIGHT`. If you change the gap, update `ITEM_GAP`.
-
----
-
-## 17. Suggested Onboarding Plan
-
-### Read first (Day 1)
-1. `src/routes/paths.ts` — URL structure
-2. `src/routes/index.tsx` — route composition
-3. `src/api/cardsApi.ts` — data layer
-4. `src/auth/AuthContext.tsx` — auth state
-
-### Run the app (Day 2)
-```bash
-npm install && npm run dev
-```
-Log in with any email + any 8-character password. Run `npm test` and `npm run test:e2e`.
-
-### Safe areas to start contributing
-- Styled Components blocks — visually isolated
-- `NotFound.tsx` — simple, fully tested
-- `AmountFilter.tsx` — add debounce (useful, low risk)
-- New tests — add E2E coverage for the login flow
-
-### Avoid initially
-- `AuthContext.tsx` — touches auth across the whole app
-- `cardsApi.ts` — changing endpoint signatures breaks all consuming hooks
-- `TransactionList.tsx` — virtualiser config is sensitive to height constants
-- The `useEffect` in `HomePage.tsx` — removing it breaks the auto-redirect
-
-### First recommended tasks
-1. Add debounce to `AmountFilter`
-2. Write E2E tests for the login flow
-3. Add a top-level error boundary to `App.tsx`
-4. Redirect invalid `/:cardId` values to `/` in `TransactionPanel`
