@@ -31,7 +31,7 @@ const Card = styled.button<{ $color: string; $selected: boolean }>`
   text-align: left;
   /* component styles */
   box-sizing: border-box;
-  flex: 1;
+  flex: 0 0 240px;
   height: 160px;
   width: 240px;
   padding: 24px 36px;
