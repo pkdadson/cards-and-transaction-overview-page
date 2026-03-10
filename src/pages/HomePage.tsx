@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { CardList } from '../components/CardList';
 import { AmountFilter } from '../components/AmountFilter';
 import { TransactionList } from '../components/TransactionList';
+import { CardListSkeleton, TransactionListSkeleton } from '../components/ui/Skeleton';
 import { useGetCardsQuery, useGetTransactionsQuery } from '../api/cardsApi';
 
 export function HomePage() {
@@ -10,8 +11,12 @@ export function HomePage() {
   const [filterAmount, setFilterAmount] = useState('');
 
   const { data: cards = [], isLoading: cardsLoading } = useGetCardsQuery();
-  const { data: transactions = [], isFetching: transactionsFetching } =
-    useGetTransactionsQuery(selectedCardId ?? '', { skip: selectedCardId === null });
+  const {
+    data: transactions = [],
+    isFetching: txFetching,
+    isError: txError,
+    refetch: retryTx,
+  } = useGetTransactionsQuery(selectedCardId ?? '', { skip: !selectedCardId });
 
   useEffect(() => {
     if (cards.length > 0 && selectedCardId === null) {
@@ -32,7 +37,7 @@ export function HomePage() {
 
       <Section>
         {cardsLoading ? (
-          <p aria-live="polite">Loading cards…</p>
+          <CardListSkeleton />
         ) : (
           <CardList cards={cards} selectedCardId={selectedCardId} onSelect={handleCardSelect} />
         )}
@@ -48,8 +53,13 @@ export function HomePage() {
             <SectionHeading $color={selectedCard.color}>
               {selectedCard.description}
             </SectionHeading>
-            {transactionsFetching ? (
-              <p>Loading transactions…</p>
+            {txFetching ? (
+              <TransactionListSkeleton />
+            ) : txError ? (
+              <TxErrorState>
+                <p>Failed to load transactions.</p>
+                <RetryButton type="button" onClick={retryTx}>Try again</RetryButton>
+              </TxErrorState>
             ) : (
               <TransactionList
                 transactions={transactions}
@@ -92,4 +102,27 @@ const Hint = styled.p`
   color: #bbb;
   margin-top: 40px;
   text-align: center;
+`;
+
+const TxErrorState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  color: #c0392b;
+  font-size: 14px;
+`;
+
+const RetryButton = styled.button`
+  font-size: 13px;
+  color: #555;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
+  }
 `;

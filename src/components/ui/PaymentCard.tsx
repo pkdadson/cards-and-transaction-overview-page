@@ -14,10 +14,8 @@ export function PaymentCard({ name, cardId, color, selected, onSelect }: Props) 
       $color={color}
       $selected={selected}
       onClick={onSelect}
-      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect()}
-      role="button"
       aria-pressed={selected}
-      tabIndex={0}
+      type="button"
     >
       <Name>{name}</Name>
       <Id>{cardId}</Id>
@@ -25,7 +23,14 @@ export function PaymentCard({ name, cardId, color, selected, onSelect }: Props) 
   );
 }
 
-const Card = styled.div<{ $color: string; $selected: boolean }>`
+const Card = styled.button<{ $color: string; $selected: boolean }>`
+  /* reset browser button defaults */
+  appearance: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+  /* component styles */
+  box-sizing: border-box;
   flex: 1;
   height: 160px;
   width: 240px;
