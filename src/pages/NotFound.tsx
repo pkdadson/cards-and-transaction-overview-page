@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { PATHS } from '@/routes/paths';
 
 export function NotFound() {
   return (
     <Wrapper>
       <Code>404</Code>
       <Message>Page not found</Message>
-      <HomeLink to="/">Go back home</HomeLink>
+      <HomeLink to={PATHS.home}>Go back home</HomeLink>
     </Wrapper>
   );
 }
