@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import type { Card } from '../types';
+import { PaymentCard } from '@/components/ui/PaymentCard';
+import type { Card } from '@/types';
 
 interface Props {
   cards: Card[];
@@ -12,18 +13,13 @@ export function CardList({ cards, selectedCardId, onSelect }: Props) {
     <List>
       {cards.map((card) => (
         <li key={card.id}>
-          <CardItem
-            $color={card.color}
-            $selected={card.id === selectedCardId}
-            onClick={() => onSelect(card.id)}
-            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(card.id)}
-            role="button"
-            aria-pressed={card.id === selectedCardId}
-            tabIndex={0}
-          >
-            <CardName>{card.description}</CardName>
-            <CardId>{card.id}</CardId>
-          </CardItem>
+          <PaymentCard
+            name={card.description}
+            cardId={card.id}
+            color={card.color}
+            selected={card.id === selectedCardId}
+            onSelect={() => onSelect(card.id)}
+          />
         </li>
       ))}
     </List>
@@ -33,39 +29,12 @@ export function CardList({ cards, selectedCardId, onSelect }: Props) {
 const List = styled.ul`
   display: flex;
   gap: 24px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   list-style: none;
   margin: 0;
-  padding: 0;
-`;
-
-const CardItem = styled.div<{ $color: string; $selected: boolean }>`
-  flex: 1;
-  height: 160px;
-  width: 240px;
-  padding: 24px 36px;
-  border-radius: 16px;
-  background: ${({ $color }) => $color};
-  color: white;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  opacity: ${({ $selected }) => ($selected ? 1 : 0.75)};
-  outline: none;
-
-  &:focus-visible {
-    outline: 3px solid white;
-    outline-offset: 3px;
-  }
-`;
-
-const CardName = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-`;
-
-const CardId = styled.span`
-  font-size: 13px;
-  opacity: 0.75;
+  padding: 0 0 8px;
+  /* hide scrollbar on desktop, keep it functional */
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 `;

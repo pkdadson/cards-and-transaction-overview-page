@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import type { Transaction } from '../types';
+import { TransactionItem } from '@/components/ui/TransactionItem';
+import type { Transaction } from '@/types';
 
 interface Props {
   transactions: Transaction[];
@@ -22,18 +23,15 @@ export function TransactionList({ transactions, cardColor, filterAmount }: Props
   return (
     <List>
       {visible.map((tx) => (
-        <Item key={tx.id} $accent={cardColor}>
-          <span>{tx.description}</span>
-          <Amount $negative={tx.amount < 0}>{formatAmount(tx.amount)}</Amount>
-        </Item>
+        <TransactionItem
+          key={tx.id}
+          description={tx.description}
+          amount={tx.amount}
+          accentColor={cardColor}
+        />
       ))}
     </List>
   );
-}
-
-function formatAmount(amount: number): string {
-  const abs = Math.abs(amount).toFixed(2);
-  return amount < 0 ? `−${abs}€` : `${abs}€`;
 }
 
 const List = styled.ul`
@@ -44,24 +42,6 @@ const List = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 16px;
-`;
-
-const Item = styled.li<{ $accent: string }>`
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 60px;
-  align-items: center;
-  padding: 16px;
-  border-left: 3px solid ${({ $accent }) => $accent};
-  background: #fafafa;
-  border-radius: 4px;
-`;
-
-const Amount = styled.span<{ $negative: boolean }>`
-  font-weight: 600;
-  color: ${({ $negative }) => ($negative ? '#c0392b' : 'inherit')};
 `;
 
 const Empty = styled.p`
